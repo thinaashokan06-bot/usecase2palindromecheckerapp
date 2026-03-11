@@ -4,92 +4,79 @@ import java.util.Scanner;
 import java.util.Stack;
 
 public class PalindromeCheckerApp {
-    interface PalindromeStrategy {
-        boolean checkPalindrome(String input);
-    }
+    // Reverse String Method
+    public static boolean reverseMethod(String input) {
 
-    // Strategy 1: Reverse String Method
-    static class ReverseStrategy implements PalindromeStrategy {
+        String reversed = "";
 
-        public boolean checkPalindrome(String input) {
-
-            String reversed = "";
-
-            for (int i = input.length() - 1; i >= 0; i--) {
-                reversed += input.charAt(i);
-            }
-
-            return input.equals(reversed);
+        for (int i = input.length() - 1; i >= 0; i--) {
+            reversed += input.charAt(i);
         }
+
+        return input.equals(reversed);
     }
 
-    // Strategy 2: Two Pointer Method
-    static class TwoPointerStrategy implements PalindromeStrategy {
+    // Two Pointer Method
+    public static boolean twoPointerMethod(String input) {
 
-        public boolean checkPalindrome(String input) {
+        int start = 0;
+        int end = input.length() - 1;
 
-            int start = 0;
-            int end = input.length() - 1;
+        while (start < end) {
 
-            while (start < end) {
-
-                if (input.charAt(start) != input.charAt(end)) {
-                    return false;
-                }
-
-                start++;
-                end--;
+            if (input.charAt(start) != input.charAt(end)) {
+                return false;
             }
 
+            start++;
+            end--;
+        }
+
+        return true;
+    }
+
+    // Recursive Method
+    public static boolean recursiveMethod(String input, int start, int end) {
+
+        if (start >= end)
             return true;
-        }
+
+        if (input.charAt(start) != input.charAt(end))
+            return false;
+
+        return recursiveMethod(input, start + 1, end - 1);
     }
 
-    // Context Class
-    static class PalindromeContext {
-
-        private PalindromeStrategy strategy;
-
-        public void setStrategy(PalindromeStrategy strategy) {
-            this.strategy = strategy;
-        }
-
-        public boolean execute(String input) {
-            return strategy.checkPalindrome(input);
-        }
-    }
-
-    // Main Method
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
-        PalindromeContext context = new PalindromeContext();
-
-        System.out.println("Choose Palindrome Algorithm:");
-        System.out.println("1. Reverse String Strategy");
-        System.out.println("2. Two Pointer Strategy");
-
-        int choice = scanner.nextInt();
-        scanner.nextLine();
 
         System.out.print("Enter a string: ");
         String input = scanner.nextLine();
 
-        if (choice == 1) {
-            context.setStrategy(new ReverseStrategy());
-        } else {
-            context.setStrategy(new TwoPointerStrategy());
-        }
+        // Reverse Method Performance
+        long startTime1 = System.nanoTime();
+        boolean result1 = reverseMethod(input);
+        long endTime1 = System.nanoTime();
 
-        boolean result = context.execute(input);
+        // Two Pointer Performance
+        long startTime2 = System.nanoTime();
+        boolean result2 = twoPointerMethod(input);
+        long endTime2 = System.nanoTime();
 
-        if (result) {
-            System.out.println("The given string is a PALINDROME.");
-        } else {
-            System.out.println("The given string is NOT a palindrome.");
-        }
+        // Recursive Performance
+        long startTime3 = System.nanoTime();
+        boolean result3 = recursiveMethod(input, 0, input.length() - 1);
+        long endTime3 = System.nanoTime();
+
+        System.out.println("\nResults:");
+
+        System.out.println("Reverse Method: " + result1 + " | Time: " + (endTime1 - startTime1) + " ns");
+
+        System.out.println("Two Pointer Method: " + result2 + " | Time: " + (endTime2 - startTime2) + " ns");
+
+        System.out.println("Recursive Method: " + result3 + " | Time: " + (endTime3 - startTime3) + " ns");
 
         scanner.close();
     }
 }
-
