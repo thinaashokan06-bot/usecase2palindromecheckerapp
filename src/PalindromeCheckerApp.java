@@ -4,18 +4,36 @@ import java.util.Scanner;
 import java.util.Stack;
 
 public class PalindromeCheckerApp {
-    static class PalindromeService {
+    interface PalindromeStrategy {
+        boolean checkPalindrome(String input);
+    }
 
-        public boolean isPalindrome(String input) {
+    // Strategy 1: Reverse String Method
+    static class ReverseStrategy implements PalindromeStrategy {
 
-            String processed = input.toLowerCase().replaceAll("\\s+", "");
+        public boolean checkPalindrome(String input) {
+
+            String reversed = "";
+
+            for (int i = input.length() - 1; i >= 0; i--) {
+                reversed += input.charAt(i);
+            }
+
+            return input.equals(reversed);
+        }
+    }
+
+    // Strategy 2: Two Pointer Method
+    static class TwoPointerStrategy implements PalindromeStrategy {
+
+        public boolean checkPalindrome(String input) {
 
             int start = 0;
-            int end = processed.length() - 1;
+            int end = input.length() - 1;
 
             while (start < end) {
 
-                if (processed.charAt(start) != processed.charAt(end)) {
+                if (input.charAt(start) != input.charAt(end)) {
                     return false;
                 }
 
@@ -27,15 +45,43 @@ public class PalindromeCheckerApp {
         }
     }
 
+    // Context Class
+    static class PalindromeContext {
+
+        private PalindromeStrategy strategy;
+
+        public void setStrategy(PalindromeStrategy strategy) {
+            this.strategy = strategy;
+        }
+
+        public boolean execute(String input) {
+            return strategy.checkPalindrome(input);
+        }
+    }
+
+    // Main Method
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
-        PalindromeService service = new PalindromeService();
+        PalindromeContext context = new PalindromeContext();
 
-        System.out.print("Enter a string to check palindrome: ");
+        System.out.println("Choose Palindrome Algorithm:");
+        System.out.println("1. Reverse String Strategy");
+        System.out.println("2. Two Pointer Strategy");
+
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+
+        System.out.print("Enter a string: ");
         String input = scanner.nextLine();
 
-        boolean result = service.isPalindrome(input);
+        if (choice == 1) {
+            context.setStrategy(new ReverseStrategy());
+        } else {
+            context.setStrategy(new TwoPointerStrategy());
+        }
+
+        boolean result = context.execute(input);
 
         if (result) {
             System.out.println("The given string is a PALINDROME.");
@@ -46,3 +92,4 @@ public class PalindromeCheckerApp {
         scanner.close();
     }
 }
+
